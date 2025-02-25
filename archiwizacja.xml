@@ -1,0 +1,126 @@
+<Archive>
+	<Macros>
+		<Macro Name="%DataBase%" Value="BAZA" Type="Fox"/>
+		<Macro Name="%TransactionBase%" Value="BAZATRANS" Type="Fox"/>
+		<Macro Name="%UniqueClientNumber%" Value="NIPCYFRA" Type="Fox"/>
+		<!--Macro Name="%SessionID%" Value="ECR_ID" Type="Fox"/ -->
+		<Macro Name="%SessionID%" Value="CD" Type="Environment"/>
+		<Macro Name="%Date%" Value="yyyyMMdd" Type="Datetime"/>
+		<Macro Name="%Time%" Value="HHmmss" Type="Datetime"/>
+		<Macro Name="%Minuta%" Value="mm" Type="Datetime"/>
+	</Macros>
+	<Scripts>
+		<Script Action="Before" Command="wmic.exe" Arguments="CPU" FileOutput="temp\cpu.txt"/>
+		<Script Action="Before" Command="wmic.exe" Arguments="COMPUTERSYSTEM" FileOutput="temp\computersystem.txt"/>
+		<Script Action="Before" Command="wmic.exe" Arguments="NICCONFIG" FileOutput="temp\nicconfig.txt"/>
+		<Script Action="Before" Command="wmic.exe" Arguments="PRINTER" FileOutput="temp\printer.txt"/>
+		<Script Action="Before" Command="wmic.exe" Arguments="LOGICALDISK" FileOutput="temp\logicaldisk.txt"/>
+		<Script Action="Before" Command="wmic.exe" Arguments="startup get caption,command" FileOutput="temp\startup.txt"/>
+		<Script Action="Before" Command="schtasks.exe" Arguments="/Query" FileOutput="temp\startup.txt"/>
+		<Script Action="Before" Command="cmd.exe" Arguments="/C &quot;dir /S&quot;" FileOutput="temp\dir.txt"/>
+		<Script Action="Before" Command="tasklist.exe" Arguments="/V /FO TABLE" FileOutput="temp\tasklist.txt"/>
+		<Script Action="Before" Command="systeminfo.exe" Arguments="" FileOutput="temp\systeminfo.txt"/>
+		
+		<Script Action="Before" Command="reg.exe" Arguments="export &quot;HKEY_LOCAL_MACHINE\SOFTWARE\Classes\MANAGER&quot; temp\szef.reg /Y"/>
+		<Script Action="Before" Command="reg.exe" Arguments="export &quot;HKEY_LOCAL_MACHINE\SOFTWARE\Classes\POS&quot; temp\pos.reg /Y"/>
+	</Scripts>
+
+	<Settings>
+		<DirectoryZip>.\arc\%UniqueClientNumber%\POS_%SessionID%\%Date%_%Time%\</DirectoryZip>
+		<DirectoryServer>%UniqueClientNumber%/%SessionID%/%Date%_%Time%/</DirectoryServer>		
+		<Password>%UniqueClientNumber%</Password>
+		<DeletePrevoiusArchiwum>1</DeletePrevoiusArchiwum>
+	</Settings>
+	<Items>
+		<Item>
+			<name>DANE_SLOWNIKOWE</name>
+			<recurse>1</recurse>
+			<path>%DataBase%</path>
+			<patterns>
+				<pattern>*.dbf</pattern>
+				<pattern>*.fpt</pattern>
+			</patterns>
+			<zipfile>dane.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>TRANSAKCJE</name>
+			<recurse>1</recurse>
+			<path>%TransactionBase%</path>
+			<patterns>
+				<pattern>name = *.dbf</pattern>
+				<pattern>*.fpt</pattern>
+			</patterns>
+			<zipfile>trans.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>sql</name>
+			<recurse>1</recurse>
+			<path>.\sql</path>
+			<patterns>
+				<pattern>name = *.dbf</pattern>
+				<pattern>*.fpt</pattern>
+			</patterns>
+			<zipfile>sql.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>log</name>
+			<recurse>1</recurse>
+			<path>.\trans</path>
+			<patterns>
+				<pattern>name = *.log and size>1mb</pattern>
+				<pattern>log*.zip</pattern>
+			</patterns>
+			<zipfile>log.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>log</name>
+			<recurse>1</recurse>
+			<path>.\</path>
+			<patterns>
+				<pattern>*.json</pattern>
+				<pattern>*.log</pattern>
+				<pattern>*.txt</pattern>
+				<pattern>*.xml</pattern>
+			</patterns>
+			<zipfile>log.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>alert</name>
+			<recurse>1</recurse>
+			<path>.\</path>
+			<patterns>
+				<pattern>*.bak</pattern>
+				<pattern>*.sql</pattern>
+				<pattern>*.lic</pattern>
+			</patterns>
+			<zipfile>alert.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>memory</name>
+			<recurse>1</recurse>
+			<path>.\</path>
+			<patterns>
+				<pattern>*.mem</pattern>
+				<pattern>DumpMemory*.txt</pattern>
+			</patterns>
+			<zipfile>memory.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+		<Item>
+			<name>ksef</name>
+			<recurse>1</recurse>
+			<path>.\ksef</path>
+			<patterns>
+				<pattern>*.*</pattern>
+			</patterns>
+			<zipfile>ksef.zip</zipfile>
+			<SendToSynology>1</SendToSynology>
+		</Item>
+	</Items>
+</Archive>
